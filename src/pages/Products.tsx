@@ -35,70 +35,40 @@ const Products = () => {
     setTempProducts(fetchProducts());
   }, []);
 
-  useEffect(() => {
-    let filteredData: ProductType[] = [];
+useEffect(() => {
+  let filteredData: ProductType[] = [...tempProducts];
 
-    let filter1Applied = false;
-    let filter2Applied = false;
-    let filter3Applied = false;
-
-    if (multipleFilters.brand.includes(true)) {
-      if (multipleFilters.brand[0]) {
-        tempProducts.forEach((product) => {
-          if (product.productName === "Incredible Frozen Table")
-            filteredData.push(product);
-        });
+  if (multipleFilters.brand.includes(true)) {
+    filteredData = filteredData.filter((product) => {
+      if (multipleFilters.brand[0] && product.productName === "Incredible Frozen Table") {
+        return true;
       }
-      if (multipleFilters.brand[1]) {
-        tempProducts.forEach((product) => {
-          if (product.productName === "Tasty Wooden Car")
-            filteredData.push(product);
-        });
+      if (multipleFilters.brand[1] && product.productName === "Tasty Wooden Car") {
+        return true;
       }
-      filter1Applied = true;
-    }
+      return false;
+    });
+  }
 
-    if (multipleFilters.rating.includes(true)) {
-      for (let i = 0; i < multipleFilters.rating.length; i++) {
-        if (multipleFilters.rating[i]) {
-          tempProducts.forEach((product) => {
-            if (product.productRating === i + 1) {
-              filteredData.push(product);
-            }
-          });
-        }
-      }
-      filter2Applied = true;
-    }
+  if (multipleFilters.rating.includes(true)) {
+    filteredData = filteredData.filter((product) => {
+      return multipleFilters.rating[product.productRating - 1];
+    });
+  }
 
-    if (multipleFilters.price[0]) {
-      tempProducts.forEach((product) => {
-        if (product.productDisPrice < 500) {
-          filteredData.push(product);
-        }
-      });
+  if (multipleFilters.price[0]) {
+    filteredData = filteredData.filter((product) => product.productDisPrice < 500);
+  }
 
-      filter3Applied = true;
-    }
+  if (multipleFilters.price[1]) {
+    filteredData = filteredData.filter(
+      (product) => product.productDisPrice >= 1000 && product.productDisPrice <= 3000
+    );
+  }
 
-    if (multipleFilters.price[1]) {
-      tempProducts.forEach((product) => {
-        if (
-          product.productDisPrice >= 1000 &&
-          product.productDisPrice <= 3000
-        ) {
-          filteredData.push(product);
-        }
-      });
-      filter3Applied = true;
-    }
+  setProducts(filteredData);
+}, [multipleFilters, tempProducts]);
 
-    if (filter1Applied || filter2Applied || filter3Applied) {
-      setProducts(filteredData);
-    } else {
-      setProducts(tempProducts);
-    }
-  }, [multipleFilters, tempProducts]);
 
   console.log(multipleFilters);
 
